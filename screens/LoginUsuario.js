@@ -1,19 +1,29 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 
-export default function EscolhaPerfil({ navigation }) {
-  console.log("EscolhaPerfil renderizado");
+export default function Login({ route, navigation }) {
+  // Adicione um valor padrão para perfil
+  const { perfil = 'Usuario' } = route.params || {};
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+
+  const handleLogin = () => {
+    navigation.navigate('EscolhaPerfil');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Escolha seu Perfil</Text>
+      <Text style={styles.title}>Login - {perfil}</Text>
+      <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} />
+      <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenha} />
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Button title="Usuario" onPress={() => navigation.navigate('LoginUsuario', { perfil: 'Usuario'})} />
-        </View>
+          <Button title="Login" onPress={handleLogin} />
+        </View> 
         <View style={styles.buttonWrapper}>
-          <Button title="Motorista" onPress={() => navigation.navigate('LoginMotorista', { perfil: 'Motorista' })} />
-        </View>
-      </View>
+          <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { cadastro: 'Cadastro' })} />
+        </View> 
+      </View>  
     </View>
   );
 }
@@ -60,3 +70,4 @@ const styles = StyleSheet.create({
     color: "#4CAF50",
   },
 });
+

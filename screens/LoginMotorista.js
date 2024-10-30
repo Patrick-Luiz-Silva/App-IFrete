@@ -1,17 +1,27 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 
-export default function EscolhaPerfil({ navigation }) {
-  console.log("EscolhaPerfil renderizado");
+export default function Login({ route, navigation }) {
+  const { perfil = 'Motorista' } = route.params || {};
+  const [email, setEmailMotorista] = useState('');
+  const [senha, setSenhaMotorista] = useState('');
+
+  const handleLogin = () => {
+    navigation.navigate('EscolhaPerfil');
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Escolha seu Perfil</Text>
+      <Text style={styles.title}>Login - {perfil}</Text>
+      <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmailMotorista} />
+      <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenhaMotorista} />
+      
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Button title="Usuario" onPress={() => navigation.navigate('LoginUsuario', { perfil: 'Usuario'})} />
+          <Button title="Login" onPress={handleLogin} />
         </View>
         <View style={styles.buttonWrapper}>
-          <Button title="Motorista" onPress={() => navigation.navigate('LoginMotorista', { perfil: 'Motorista' })} />
+          <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { cadastro: 'Cadastro' })}/>
         </View>
       </View>
     </View>
