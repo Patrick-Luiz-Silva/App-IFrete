@@ -2,7 +2,6 @@
   "name": "appfretes",
   "main": "index.js",
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -19,6 +18,7 @@
     "@expo/vector-icons": "^14.0.2",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
+    "appfretes": "file:",
     "cors": "^2.8.5",
     "expo": "^51.0.38",
     "expo-config-plugins": "^0.1.2",

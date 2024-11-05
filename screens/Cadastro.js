@@ -27,7 +27,8 @@ export default function Cadastro({ route, navigation }) {
       });
       if (response.ok) {
         Alert.alert("Cadastro realizado com sucesso!");
-        navigation.navigate('EscolhaPerfil');
+        // if
+        navigation.navigate('LoginUsuario');
       } else {
         Alert.alert("Erro ao cadastrar. Tente novamente.");
       }
@@ -39,7 +40,7 @@ export default function Cadastro({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> Cadastro de {perfil}</Text>
+      <Text style={styles.title}> Cadastro {perfil}</Text>
       <TextInput placeholder="Nome" style={styles.input} value={nome} onChangeText={setNome} />
       <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} />
       <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenha} />

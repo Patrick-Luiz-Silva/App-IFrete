@@ -8,7 +8,7 @@ export default function Login({ route, navigation }) {
   const [senha, setSenha] = useState('');
 
   const handleLogin = () => {
-    navigation.navigate('EscolhaPerfil');
+    navigation.navigate('PrincipalUsuario');
   };
 
   return (
@@ -21,7 +21,7 @@ export default function Login({ route, navigation }) {
           <Button title="Login" onPress={handleLogin} />
         </View> 
         <View style={styles.buttonWrapper}>
-          <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { cadastro: 'Cadastro' })} />
+          <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { perfil: 'Usuario' })} />
         </View> 
       </View>  
     </View>
