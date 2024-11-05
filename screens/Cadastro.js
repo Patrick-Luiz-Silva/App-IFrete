@@ -1,21 +1,45 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
 
 export default function Cadastro({ route, navigation }) {
-  const { cadastro = 'Cadastro' } = route.params || {};
+  const { perfil } = route.params || {};
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
 
-  const handleCadastrar = () => {
-    navigation.navigate('EscolhaPerfil');
+  const handleCadastrar = async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/cadastro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nome,
+          email,
+          senha,
+          telefone,
+          endereco,
+          perfil,
+        }),
+      });
+      if (response.ok) {
+        Alert.alert("Cadastro realizado com sucesso!");
+        navigation.navigate('EscolhaPerfil');
+      } else {
+        Alert.alert("Erro ao cadastrar. Tente novamente.");
+      }
+    } catch (error) {
+      console.error("Erro de rede:", error);
+      Alert.alert("Erro de conexão. Tente novamente.");
+    }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}> {cadastro}</Text>
+      <Text style={styles.title}> Cadastro de {perfil}</Text>
       <TextInput placeholder="Nome" style={styles.input} value={nome} onChangeText={setNome} />
       <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} />
       <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenha} />
