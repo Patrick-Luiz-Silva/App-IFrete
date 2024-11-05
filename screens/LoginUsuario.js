@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
-import PrincipalUsuario from './PrincipalUsuario';
 
 export default function Login({ route, navigation }) {
   // Adicione um valor padrão para perfil
@@ -9,7 +8,7 @@ export default function Login({ route, navigation }) {
   const [senha, setSenha] = useState('');
 
   const handleLogin = () => {
-    navigation.navigate('EscolhaPerfil');
+    navigation.navigate('PrincipalUsuario');
   };
 
   return (
@@ -23,9 +22,6 @@ export default function Login({ route, navigation }) {
         </View> 
         <View style={styles.buttonWrapper}>
           <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { perfil: 'Usuario' })} />
-        </View> 
-        <View style={styles.buttonWrapper}>
-          <Button title="teste" onPress={() => navigation.navigate('PrincipalUsuario')} />
         </View> 
       </View>  
     </View>
@@ -74,4 +70,3 @@ const styles = StyleSheet.create({
     color: "#4CAF50",
   },
 });
-
