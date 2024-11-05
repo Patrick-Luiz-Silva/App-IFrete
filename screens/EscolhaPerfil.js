@@ -8,10 +8,10 @@ export default function EscolhaPerfil({ navigation }) {
       <Text style={styles.title}>Escolha seu Perfil</Text>
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
-          <Button title="Usuario" onPress={() => navigation.navigate('Cadastro', { perfil: 'Usuario'})} />
+          <Button title="Usuario" onPress={() => navigation.navigate('LoginUsuario', { perfil: 'Usuario'})} />
         </View>
         <View style={styles.buttonWrapper}>
-          <Button title="Motorista" onPress={() => navigation.navigate('Cadastro', { perfil: 'Motorista' })} />
+          <Button title="Motorista" onPress={() => navigation.navigate('LoginMotorista', { perfil: 'Motorista' })} />
         </View>
       </View>
     </View>
