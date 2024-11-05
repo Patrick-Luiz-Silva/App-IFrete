@@ -9,8 +9,25 @@ export default function Cadastro({ route, navigation }) {
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
 
-  const handleCadastrar = () => {
-    navigation.navigate('EscolhaPerfil');
+  const handleCadastrar = async () => {
+    try {
+      const response = await fetch('http://localhost:8081/cadastro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nome, email, senha, telefone, endereco }),
+      });
+  
+      if (response.ok) {
+        alert('Cadastro realizado com sucesso!');
+        navigation.navigate('EscolhaPerfil');
+      } else {
+        alert('Erro no cadastro');
+      }
+    } catch (error) {
+      alert(`Erro: ${error.message}`);
+    }
   };
 
   return (
