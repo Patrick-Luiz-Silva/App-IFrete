@@ -1,8 +1,47 @@
 import express from 'express';
 import { connectDb } from './dbConnection.js';
+import { ObjectId } from 'mongodb';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { verifyToken } from './authMiddleware.js';
 
 const router = express.Router();
 
+// Rota para login
+router.post('/api/login', async (req, res) => {
+    const { email, senha } = req.body;
+
+    if (!email || !senha) {
+        return res.status(400).json({ message: "Email e senha são obrigatórios." });
+    }
+
+    try {
+        const collection = await connectDb();
+        const usuario = await collection.findOne({ email });
+
+        if (!usuario) {
+            return res.status(401).json({ message: "Email não encontrado." });
+        }
+
+        const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
+        if (!senhaCorreta) {
+            return res.status(401).json({ message: "Senha incorreta." });
+        }
+
+        const token = jwt.sign(
+            { id: usuario._id, email: usuario.email, perfil: usuario.perfil },
+            'secreta',
+            { expiresIn: '1h' }
+        );
+
+        res.status(200).json({ message: "Login bem-sucedido!", token });
+    } catch (error) {
+        console.error("Erro no login:", error);
+        res.status(500).json({ message: "Erro ao processar o login." });
+    }
+});
+
+// Rota de cadastro de usuário existente
 router.post('/api/cadastro', async (req, res) => {
     const { nome, email, senha, telefone, endereco, perfil } = req.body;
 
@@ -11,13 +50,16 @@ router.post('/api/cadastro', async (req, res) => {
     }
 
     try {
+        const salt = await bcrypt.genSalt(10);
+        const senhaCriptografada = await bcrypt.hash(senha, salt);
+
         const collection = await connectDb();
         const agora = new Date();
         const offset = -3;
         const result = await collection.insertOne({
             nome,
             email,
-            senha,
+            senha: senhaCriptografada,
             telefone,
             endereco,
             perfil,
@@ -27,6 +69,46 @@ router.post('/api/cadastro', async (req, res) => {
     } catch (error) {
         console.error("Erro ao cadastrar usuário:", error);
         res.status(500).json({ message: "Erro ao cadastrar usuário." });
+    }
+});
+
+// Rota para obter o perfil do usuário autenticado
+router.get('/api/perfil', verifyToken, async (req, res) => {
+    try {
+        const collection = await connectDb();
+        const usuario = await collection.findOne({ _id: new ObjectId(req.userId) });
+
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuário não encontrado." });
+        }
+
+        const { nome, email, telefone, endereco } = usuario;
+        res.json({ nome, email, telefone, endereco });
+    } catch (error) {
+        console.error("Erro ao buscar perfil:", error);
+        res.status(500).json({ message: "Erro ao buscar perfil." });
+    }
+});
+
+// Rota para atualizar o perfil do usuário autenticado
+router.put('/api/perfil', verifyToken, async (req, res) => {
+    const { nome, email, telefone, endereco } = req.body;
+
+    try {
+        const collection = await connectDb();
+        const result = await collection.updateOne(
+            { _id: new ObjectId(req.userId) },
+            { $set: { nome, email, telefone, endereco } }
+        );
+
+        if (result.matchedCount === 0) {
+            return res.status(404).json({ message: "Usuário não encontrado." });
+        }
+
+        res.json({ message: "Perfil atualizado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao atualizar perfil:", error);
+        res.status(500).json({ message: "Erro ao atualizar perfil." });
     }
 });
 

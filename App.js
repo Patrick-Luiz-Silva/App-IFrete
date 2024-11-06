@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-//import { createStackNavigator } from '@react-navigation/stack';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import EscolhaPerfilScreen from "./screens/EscolhaPerfil";
 import CadastroScreen from './screens/Cadastro';
@@ -9,9 +9,35 @@ import LoginUsuarioScreen from './screens/LoginUsuario';
 import PrincipalUsuarioScreen from './screens/PrincipalUsuario';
 import EditarPerfilScreen from './screens/EditarPerfil';
 import LoginMotoristaScreen from './screens/LoginMotorista';
+import NotificacaoScreen from './screens/Notificacao'; // Importar a tela de Notificação
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
+// Navegador de Abas Inferiores (Menu Inferior)
+function BottomTabNavigator() {
+  return (
+    <Tab.Navigator>
+      <Tab.Screen 
+        name="PainelPrincipal" 
+        component={PrincipalUsuarioScreen} 
+        options={{ title: 'Painel Principal' }}
+      />
+      <Tab.Screen 
+        name="EditarPerfil" 
+        component={EditarPerfilScreen} 
+        options={{ title: 'Editar Perfil' }} 
+      />
+      <Tab.Screen 
+        name="Notificacao" 
+        component={NotificacaoScreen} 
+        options={{ title: 'Notificação' }}
+      />
+    </Tab.Navigator>
+  );
+}
+
+// Navegador de Pilha Principal
 export default function App() {
   return (
     <NavigationContainer>
@@ -29,17 +55,12 @@ export default function App() {
         <Stack.Screen 
           name="LoginUsuario" 
           component={LoginUsuarioScreen} 
-          options={{ title: 'Login Usuario' }} 
+          options={{ title: 'Login Usuário' }} 
         />
         <Stack.Screen 
           name="PrincipalUsuario" 
-          component={PrincipalUsuarioScreen} 
-          options={{ title: 'Postar Frete' }} 
-        />
-        <Stack.Screen 
-          name="EditarPerfil" 
-          component={EditarPerfilScreen} 
-          options={{ title: 'Editar Perfil' }} 
+          component={BottomTabNavigator} 
+          options={{ title: 'Painel Principal', headerShown: false }} 
         />
         <Stack.Screen 
           name="LoginMotorista" 
