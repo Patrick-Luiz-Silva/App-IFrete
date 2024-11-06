@@ -41,6 +41,30 @@ router.post('/api/login', async (req, res) => {
     }
 });
 
+// Rota para postar frete
+router.post('/api/postar', async(req, res) => {
+    const { dataFrete, horario, enderecoColeta, enderecoDestino, tipoCarga, tipoVeiculo } = req.body;
+    if (!dataFrete || !horario || !enderecoColeta || !enderecoDestino || !tipoCarga || !tipoVeiculo) {
+        return res.status(400).json({ message: "Preencha todos os campos." });
+    }
+
+    try {
+        const collection = await connectDb();
+        const result = await collection.insertOne({
+            dataFrete,
+            horario,
+            enderecoColeta,
+            enderecoDestino,
+            tipoCarga,
+            tipoVeiculo,
+        });
+        res.status(201).json({ id: result.insertedId, message: "Frete postado com sucesso!" });
+    } catch (error) {
+        console.error("Erro ao postar frete:", error);
+        res.status(500).json({ message: "Erro ao postar frete." });
+    }
+});
+
 // Rota de cadastro de usuário existente
 router.post('/api/cadastro', async (req, res) => {
     const { nome, email, senha, telefone, endereco, perfil } = req.body;
