@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function PrincipalUsuario({ navigation }) {
+
+export default function PrincipalUsuario({ navigation}) {
   const [dataFrete, setDataFrete] = useState('');
   const [horario, setHorario] = useState('');
   const [enderecoColeta, setEnderecoColeta] = useState('');
@@ -10,11 +12,14 @@ export default function PrincipalUsuario({ navigation }) {
   const [tipoVeiculo, setTipoVeiculo] = useState('');
 
   const handlePostarFrete = async () => {
+    const token = await AsyncStorage.getItem('token'); // Recupera o token JWT do AsyncStorage
+
     try {
       const response = await fetch('http://localhost:3000/api/postar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,  // Envia o token no cabeçalho Authorization
         },
         body: JSON.stringify({
           dataFrete,
@@ -26,14 +31,14 @@ export default function PrincipalUsuario({ navigation }) {
         }),
       });
       if (response.ok) {
-        Alert.alert("Frete postado com sucesso!");
-        // navigation.navigate('LoginUsuario');
-      } else {
+        const successData = await response.json();
+        Alert.alert(successData.message);
+    } else {
+        const errorData = await response.json();
         Alert.alert("Erro na postagem. Tente novamente.");
-      }
+    }
     } catch (error) {
-      console.error("Erro de rede:", error);
-      Alert.alert("Erro de conexão. Tente novamente.");
+      Alert.alert("Erro: " + error.message);
     }
   };
 

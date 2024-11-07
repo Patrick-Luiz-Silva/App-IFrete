@@ -43,8 +43,13 @@ router.post('/api/login', async (req, res) => {
 });
 
 // Rota para postar frete
-router.post('/api/postar', async(req, res) => {
+router.post('/api/postar', verifyToken, async (req, res) => {
     const { dataFrete, horario, enderecoColeta, enderecoDestino, tipoCarga, tipoVeiculo } = req.body;
+
+    const token = req.headers['authorization'].split(' ')[1]; // Pega o token JWT do cabeçalho
+    const decoded = jwt.verify(token, 'secreta'); // Decodifica o token
+    const email = decoded.email; // Obtém o email do payload
+
     if (!dataFrete || !horario || !enderecoColeta || !enderecoDestino || !tipoCarga || !tipoVeiculo) {
         return res.status(400).json({ message: "Preencha todos os campos." });
     }
@@ -52,6 +57,7 @@ router.post('/api/postar', async(req, res) => {
     try {
         const collection = dbConnect.collection("postagens");
         const result = await collection.insertOne({
+            email,
             dataFrete,
             horario,
             enderecoColeta,
@@ -59,7 +65,7 @@ router.post('/api/postar', async(req, res) => {
             tipoCarga,
             tipoVeiculo,
         });
-        res.status(201).json({ id: result.insertedId, message: "Frete postado com sucesso!" });
+        res.status(200).json({ id: result.insertedId, message: "Frete postado com sucesso!" });
     } catch (error) {
         console.error("Erro ao postar frete:", error);
         res.status(500).json({ message: "Erro ao postar frete." });
@@ -71,7 +77,15 @@ router.post('/api/cadastro', async (req, res) => {
     const { nome, email, senha, telefone, endereco, perfil } = req.body;
 
     if (!nome || !email || !senha || !telefone || !endereco) {
+        console.error("Campos obrigatórios não preenchidos.");
         return res.status(400).json({ message: "Campos obrigatórios não preenchidos." });
+    }
+
+    const collection = dbConnect.collection("usuarios");
+    const usuarioExistente = await collection.findOne({ email });
+    if (usuarioExistente) {
+        console.error("O email já está em uso!");
+        return res.status(400).json({ message: "O email já está em uso." });
     }
 
     try {
