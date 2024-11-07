@@ -1,11 +1,12 @@
 import express from 'express';
-import { connectDb } from './dbConnection.js';
+import { connectDb, cadastrarCliente } from './dbConnection.js';
 import { ObjectId } from 'mongodb';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { verifyToken } from './authMiddleware.js';
 
 const router = express.Router();
+const dbConnect = await connectDb();
 
 // Rota para login
 router.post('/api/login', async (req, res) => {
@@ -16,7 +17,7 @@ router.post('/api/login', async (req, res) => {
     }
 
     try {
-        const collection = await connectDb();
+        const collection = dbConnect.collection("usuarios");
         const usuario = await collection.findOne({ email });
 
         if (!usuario) {
@@ -49,7 +50,7 @@ router.post('/api/postar', async(req, res) => {
     }
 
     try {
-        const collection = await connectDb();
+        const collection = dbConnect.collection("postagens");
         const result = await collection.insertOne({
             dataFrete,
             horario,
@@ -74,13 +75,14 @@ router.post('/api/cadastro', async (req, res) => {
     }
 
     try {
+        // Criptografar a senha
         const salt = await bcrypt.genSalt(10);
         const senhaCriptografada = await bcrypt.hash(senha, salt);
 
-        const collection = await connectDb();
+        // Preparar o objeto cliente para inserir
         const agora = new Date();
         const offset = -3;
-        const result = await collection.insertOne({
+        const cliente = {
             nome,
             email,
             senha: senhaCriptografada,
@@ -88,8 +90,12 @@ router.post('/api/cadastro', async (req, res) => {
             endereco,
             perfil,
             dataCadastro: new Date(agora.getTime() + offset * 60 * 60 * 1000).toUTCString(),
-        });
-        res.status(201).json({ id: result.insertedId, message: "Usuário cadastrado com sucesso!" });
+        };
+
+        // Inserir o cliente na coleção usando a função cadastrarCliente
+        const clienteId = await cadastrarCliente(cliente);
+        // algum redirect com o 'clienteId'
+        res.status(201).json({ id: clienteId, message: "Usuário cadastrado com sucesso!" });
     } catch (error) {
         console.error("Erro ao cadastrar usuário:", error);
         res.status(500).json({ message: "Erro ao cadastrar usuário." });
@@ -99,7 +105,7 @@ router.post('/api/cadastro', async (req, res) => {
 // Rota para obter o perfil do usuário autenticado
 router.get('/api/perfil', verifyToken, async (req, res) => {
     try {
-        const collection = await connectDb();
+        const collection = dbConnect.collection("usuarios")
         const usuario = await collection.findOne({ _id: new ObjectId(req.userId) });
 
         if (!usuario) {
@@ -119,7 +125,7 @@ router.put('/api/perfil', verifyToken, async (req, res) => {
     const { nome, email, telefone, endereco } = req.body;
 
     try {
-        const collection = await connectDb();
+        const collection = dbConnect.collection("usuarios");
         const result = await collection.updateOne(
             { _id: new ObjectId(req.userId) },
             { $set: { nome, email, telefone, endereco } }
