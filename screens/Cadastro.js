@@ -27,8 +27,12 @@ export default function Cadastro({ route, navigation }) {
       });
       if (response.ok) {
         Alert.alert("Cadastro realizado com sucesso!");
-        // if
-        navigation.navigate('LoginUsuario');
+        if (perfil === 'Usuario') {
+          navigation.navigate('LoginUsuario');
+        }
+        if (perfil === 'Motorista') {
+          navigation.navigate('LoginMotorista');
+        }
       } else {
         Alert.alert("Erro ao cadastrar. Tente novamente.");
       }
@@ -52,7 +56,7 @@ export default function Cadastro({ route, navigation }) {
           <Button title="Cadastrar" onPress={handleCadastrar} />
         </View> 
         <View style={styles.buttonWrapper}>
-          <Button title="Voltar para Escolha de Perfil" onPress={() => navigation.goBack()} />
+          <Button title="Inicio" onPress={() => navigation.navigate('EscolhaPerfil')} />
         </View> 
       </View>     
     </View>

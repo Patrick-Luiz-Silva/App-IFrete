@@ -1,33 +1,65 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login({ route, navigation }) {
   const { perfil = 'Motorista' } = route.params || {};
-  const [email, setEmailMotorista] = useState('');
-  const [senha, setSenhaMotorista] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');  // Para exibir mensagens de erro
 
-  const handleLogin = () => {
-    // validação login
-    navigation.navigate('PrincipalUsuario');
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('http://localhost:3000/api/login', {
+        email,
+        senha,
+      });
+  
+      if (response.status === 200) {
+        const { token } = response.data; // Recupera o token da resposta
+        // Salva o token no AsyncStorage
+        await AsyncStorage.setItem('token', token);
+        console.log("Token salvo com sucesso:", token);
+  
+        // Login bem-sucedido, redirecionar para a tela PrincipalUsuario
+        navigation.navigate('PrincipalMotorista');
+      }
+    } catch (error) {
+      setErrorMessage('Email ou senha inválidos!');
+      console.error('Erro no login:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login - {perfil}</Text>
-      <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmailMotorista} />
-      <TextInput placeholder="Senha" style={styles.input} secureTextEntry value={senha} onChangeText={setSenhaMotorista} />
-      
+      <TextInput
+        placeholder="Email"
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        placeholder="Senha"
+        style={styles.input}
+        secureTextEntry
+        value={senha}
+        onChangeText={setSenha}
+      />
+      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null} {/* Exibe a mensagem de erro */}
       <View style={styles.buttonContainer}>
         <View style={styles.buttonWrapper}>
           <Button title="Login" onPress={handleLogin} />
         </View>
         <View style={styles.buttonWrapper}>
-          <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { perfil: 'Motorista' })}/>
+          <Button title="Cadastrar" onPress={() => navigation.navigate('Cadastro', { perfil: 'Motorista' })} />
         </View>
       </View>
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
@@ -67,7 +99,12 @@ const styles = StyleSheet.create({
   },
   buttonWrapper: {
     flex: 1,
-    marginHorizontal: 5, // Espaçamento entre os botões
+    marginHorizontal: 5,
     color: "#4CAF50",
+  },
+  error: {
+    color: 'red',
+    marginVertical: 10,
+    fontSize: 16,
   },
 });

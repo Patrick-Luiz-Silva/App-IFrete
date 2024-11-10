@@ -13,6 +13,7 @@ export const verifyToken = (req, res, next) => {
         if (err) return res.status(401).json({ message: "Token inválido." });
 
         req.userId = decoded.id; // Armazena o ID decodificado no objeto de requisição para uso nas rotas
+        req.email = decoded.email;
         next();
     });
 };

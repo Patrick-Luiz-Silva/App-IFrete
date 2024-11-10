@@ -9,7 +9,13 @@ import LoginUsuarioScreen from './screens/LoginUsuario';
 import PrincipalUsuarioScreen from './screens/PrincipalUsuario';
 import EditarPerfilScreen from './screens/EditarPerfil';
 import LoginMotoristaScreen from './screens/LoginMotorista';
+import CadastroVeiculoScreen from './screens/CadastroVeiculo';
 import NotificacaoScreen from './screens/Notificacao'; // Importar a tela de Notificação
+import PrincipalMotorista from './screens/PrncipalMotorista';
+import EditarVeiculo from './screens/EditarVeiculo';
+import EditarVeiculoDetalhes from './screens/EditarVeiculoDetalhes';
+import PostagensMotora from './screens/PostagensMotora';
+
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -48,6 +54,11 @@ export default function App() {
           options={{ title: 'Escolha seu Perfil' }} 
         />
         <Stack.Screen 
+          name="EditarPerfil" 
+          component={EditarPerfilScreen} 
+          options={{ title: 'Editar Cadastro' }} 
+        />
+        <Stack.Screen 
           name="Cadastro" 
           component={CadastroScreen} 
           options={{ title: 'Cadastro' }} 
@@ -63,9 +74,34 @@ export default function App() {
           options={{ title: 'Painel Principal', headerShown: false }} 
         />
         <Stack.Screen 
+          name="PrincipalMotorista" 
+          component={PrincipalMotorista} 
+          options={{ title: 'Painel Principal', headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="CadastroVeiculo" 
+          component={CadastroVeiculoScreen} 
+          options={{ title: 'Painel Principal', headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="EditarVeiculo" 
+          component={EditarVeiculo} 
+          options={{ title: 'Painel Principal', headerShown: false }} 
+        />
+        <Stack.Screen 
+          name="EditarVeiculoDetalhes" 
+          component={EditarVeiculoDetalhes} 
+          options={{ title: 'Painel Principal', headerShown: false }} 
+        />
+        <Stack.Screen 
           name="LoginMotorista" 
           component={LoginMotoristaScreen} 
           options={{ title: 'Login Motorista' }} 
+        />
+        <Stack.Screen 
+          name="PostagensMotora" 
+          component={PostagensMotora} 
+          options={{ title: 'Postagens' }} 
         />
       </Stack.Navigator>
     </NavigationContainer>
